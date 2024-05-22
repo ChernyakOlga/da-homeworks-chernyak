@@ -1,26 +1,97 @@
 Задача 1
-#Вместо этой строки сюда писать запрос - ответ на задачу 1
+SELECT orderNumber, 
+       productCode, 
+       quantityOrdered, 
+       priceEach, 
+       quantityOrdered * priceEach AS totalCost
+FROM orderdetails
+ORDER BY totalCost DESC
+LIMIT 10
 
 
 Задача 2
-#Вместо этой строки сюда писать запрос - ответ на задачу 2
+SELECT orderNumber, 
+       SUM(quantityOrdered * priceEach) AS total
+FROM orderdetails
+GROUP BY orderNumber
+HAVING total>59000
 
 
 Задача 3
-#Вместо этой строки сюда писать запрос - ответ на задачу 3
+SELECT o.orderNumber,
+       o.orderDate,
+       o.status,
+       od.total
+FROM orders AS o
+INNER JOIN 
+    (SELECT orderNumber,
+            SUM(quantityOrdered * priceEach) AS total
+     FROM orderdetails
+     GROUP BY orderNumber
+     HAVING SUM(quantityOrdered * priceEach) > 59000) AS od
+ON o.orderNumber = od.orderNumber
+ORDER BY o.orderNumber
 
 
 Задача 4
-#Вместо этой строки сюда писать запрос - ответ на задачу 4
+SELECT c.contactFirstName,
+       c.contactLastName,
+       c.country,
+       o.orderNumber,
+       o.orderDate,
+       o.status,
+       od.total
+FROM orders AS o
+INNER JOIN 
+    (SELECT orderNumber,
+            SUM(quantityOrdered * priceEach) AS total
+     FROM orderdetails
+     GROUP BY orderNumber
+     HAVING SUM(quantityOrdered * priceEach) > 59000) AS od
+ON o.orderNumber = od.orderNumber
+INNER JOIN customers AS c
+ON o.customerNumber = c.customerNumber
+ORDER BY o.orderNumber
 
 
 Задача 5
-#Вместо этой строки сюда писать запрос - ответ на задачу 5
+SELECT p.productName,
+       SUM(od.quantityOrdered * od.priceEach) AS total
+FROM orderdetails AS od
+INNER JOIN products AS p
+ON od.productCode = p.productCode
+GROUP BY p.productName
+ORDER BY total DESC
+LIMIT 10
 
 
 Задача 6
-#Вместо этой строки сюда писать запрос - ответ на задачу 6
+SELECT e.firstName,
+       e.lastName,
+       c.contactFirstName,
+       c.contactLastName
+FROM employees e
+LEFT JOIN customers c
+ON e.employeeNumber = c.salesRepEmployeeNumber
+
+UNION
+
+SELECT e.firstName,
+       e.lastName,
+       c.contactFirstName,
+       c.contactLastName
+FROM customers c
+RIGHT JOIN employees e
+ON e.employeeNumber = c.salesRepEmployeeNumber
 
 
 Задача 7
-#Вместо этой строки сюда писать запрос - ответ на задачу 7
+SELECT e1.firstName AS firstName,
+       e1.lastName AS lastName,
+       e1.jobTitle AS jobTitle,
+       e2.firstName AS subFirstName,
+       e2.lastName AS subLastName
+FROM employees e1
+LEFT JOIN employees e2
+ON e1.employeeNumber = e2.reportsTo
+ORDER BY e1.lastName, e1.firstName
